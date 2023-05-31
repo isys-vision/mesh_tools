@@ -17,7 +17,7 @@ find_package(PkgConfig REQUIRED)
 add_definitions(${LVR2_DEFINITIONS} ${OpenCV_DEFINITIONS})
 
 ### compile with c++14
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 
 # enable openmp support
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")

@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS ${PACKAGE_DEPENDENCIES})
 find_package(HDF5 REQUIRED COMPONENTS C CXX HL)
 
 ### compile with c++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 catkin_package(
   CATKIN_DEPENDS ${PACKAGE_DEPENDENCIES}
@@ -29,8 +29,8 @@ add_executable(${PROJECT_NAME}
   src/mesh_msgs_hdf5.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} 
-  ${catkin_LIBRARIES} 
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
   ${HDF5_LIBRARIES}
   ${HDF5_HL_LIBRARIES}
 )

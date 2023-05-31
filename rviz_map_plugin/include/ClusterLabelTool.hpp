@@ -96,6 +96,7 @@
 #include <OGRE/OgreMaterialManager.h>
 #include <OGRE/OgreRay.h>
 #include <OGRE/OgreSceneQuery.h>
+#include <OGRE/Ogre.h>
 
 #endif
 
@@ -104,13 +105,6 @@ namespace rviz
 class RosTopicProperty;
 class ColorProperty;
 }  // namespace rviz
-
-// OGRE stuff
-namespace Ogre
-{
-// Forward declaration
-class Vector3;
-}  // namespace Ogre
 
 namespace rviz_map_plugin
 {

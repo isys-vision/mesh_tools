@@ -60,16 +60,10 @@
 #include <OGRE/OgrePrerequisites.h>
 #include <OGRE/OgreMesh.h>
 #include <OGRE/OgreSubMesh.h>
+#include <OGRE/Ogre.h>
 
 #include <memory>
 #include <vector>
-
-namespace Ogre
-{
-// Forward declaration
-class SceneNode;
-class Mesh;
-}  // End namespace Ogre
 
 namespace rviz_map_plugin
 {
