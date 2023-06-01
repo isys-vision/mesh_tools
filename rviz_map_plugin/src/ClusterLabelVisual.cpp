@@ -56,6 +56,7 @@
 #include <OGRE/OgreSceneManager.h>
 #include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSubMesh.h>
+#include <OGRE/Ogre.h>
 
 namespace rviz_map_plugin
 {

@@ -9,11 +9,11 @@
  *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *   1. Redistributions of source code must retain the above 
+ *   1. Redistributions of source code must retain the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer.
  *
- *   2. Redistributions in binary form must reproduce the above 
+ *   2. Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
@@ -32,7 +32,7 @@
  *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
@@ -45,7 +45,7 @@
 
 #include "MeshGoalTool.hpp"
 
-#include <pluginlib/class_list_macros.h>
+#include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS( rviz_map_plugin::MeshGoalTool, rviz::Tool )
 
 namespace rviz_map_plugin{
@@ -61,7 +61,7 @@ MeshGoalTool::MeshGoalTool()
       getPropertyContainer());
 
 }
- 
+
  void MeshGoalTool::onInitialize()
  {
    MeshPoseTool::onInitialize();
@@ -73,14 +73,14 @@ MeshGoalTool::MeshGoalTool()
  {
    pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>( topic_property_->getStdString(), 1 );
  }
-  
+
  void MeshGoalTool::onPoseSet( const Ogre::Vector3& position, const Ogre::Quaternion& orientation ){
   geometry_msgs::PoseStamped msg;
   msg.pose.position.x = position.x;
   msg.pose.position.y = position.y;
   msg.pose.position.z = position.z;
-  
-  // ogreToRos(x,y,z) = (-z,-x,y) 
+
+  // ogreToRos(x,y,z) = (-z,-x,y)
 
   Ogre::Quaternion ros_orientation;
 
@@ -105,10 +105,10 @@ MeshGoalTool::MeshGoalTool()
   msg.pose.orientation.y = ros_orientation.y;
   msg.pose.orientation.z = ros_orientation.z;
   msg.pose.orientation.w = ros_orientation.w;
-  
+
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = context_->getFixedFrame().toStdString();
   pose_pub_.publish(msg);
  }
-	
+
 }
