@@ -47,20 +47,18 @@
  */
 
 #include <ClusterLabelDisplay.hpp>
-#include <ClusterLabelVisual.hpp>
 #include <ClusterLabelTool.hpp>
+#include <ClusterLabelVisual.hpp>
 
 #include <rviz/properties/bool_property.h>
 #include <rviz/properties/color_property.h>
+#include <rviz/properties/enum_property.h>
 #include <rviz/properties/float_property.h>
 #include <rviz/properties/int_property.h>
-#include <rviz/properties/enum_property.h>
 #include <rviz/properties/string_property.h>
 
-namespace rviz_map_plugin
-{
-Ogre::ColourValue getRainbowColor(float value)
-{
+namespace rviz_map_plugin {
+Ogre::ColourValue getRainbowColor(float value) {
   float r = 0.0f;
   float g = 0.0f;
   float b = 0.0f;
@@ -72,7 +70,7 @@ Ogre::ColourValue getRainbowColor(float value)
   int i = floor(h);
   float f = h - i;
   if (!(i & 1))
-    f = 1 - f;  // if i is even
+    f = 1 - f; // if i is even
   float n = 1 - f;
 
   if (i <= 1)
@@ -89,57 +87,58 @@ Ogre::ColourValue getRainbowColor(float value)
   return Ogre::ColourValue(r, g, b, 1.0f);
 }
 
-ClusterLabelDisplay::ClusterLabelDisplay()
-{
-  m_activeVisualProperty =
-      new rviz::EnumProperty("Active label", "__NEW__", "Current active label. Can be edited with Cluster Label Tool",
-                             this, SLOT(changeVisual()), this);
-  m_alphaProperty = new rviz::FloatProperty("Transparency", 1.0f,
-                                            "Transparency of the Labeled Cluster Visualization. 0.0 is fully "
-                                            "transparent, 1.0 fully opaque",
-                                            this, SLOT(updateColors()), this);
+ClusterLabelDisplay::ClusterLabelDisplay() {
+  m_activeVisualProperty = new rviz::EnumProperty(
+      "Active label", "__NEW__",
+      "Current active label. Can be edited with Cluster Label Tool", this,
+      SLOT(changeVisual()), this);
+  m_alphaProperty = new rviz::FloatProperty(
+      "Transparency", 1.0f,
+      "Transparency of the Labeled Cluster Visualization. 0.0 is fully "
+      "transparent, 1.0 fully opaque",
+      this, SLOT(updateColors()), this);
   m_alphaProperty->setMin(0.0f);
   m_alphaProperty->setMax(1.0f);
 
-  m_colorsProperty = new rviz::Property("Colors", "", "colors", this, SLOT(updateColors()), this);
+  m_colorsProperty = new rviz::Property("Colors", "", "colors", this,
+                                        SLOT(updateColors()), this);
   m_colorsProperty->setReadOnly(true);
-  m_sphereSizeProperty =
-      new rviz::FloatProperty("Brush Size", 1.0f, "Brush Size", this, SLOT(updateSphereSize()), this);
-  m_phantomVisualProperty = new rviz::BoolProperty("Show Phantom", false,
-                                                   "Show a transparent silhouette of the whole mesh to help with "
-                                                   "labeling",
-                                                   this, SLOT(updatePhantomVisual()), this);
+  m_sphereSizeProperty = new rviz::FloatProperty(
+      "Brush Size", 1.0f, "Brush Size", this, SLOT(updateSphereSize()), this);
+  m_phantomVisualProperty = new rviz::BoolProperty(
+      "Show Phantom", false,
+      "Show a transparent silhouette of the whole mesh to help with "
+      "labeling",
+      this, SLOT(updatePhantomVisual()), this);
 
-  setStatus(rviz::StatusProperty::Error, "Display", "Cant be used without Map3D plugin");
+  setStatus(rviz::StatusProperty::Error, "Display",
+            "Cant be used without Map3D plugin");
 }
 
-ClusterLabelDisplay::~ClusterLabelDisplay()
-{
-}
+ClusterLabelDisplay::~ClusterLabelDisplay() {}
 
 // =====================================================================================================================
 // Public Q_SLOTS
 
-std::shared_ptr<Geometry> ClusterLabelDisplay::getGeometry()
-{
-  if (!m_geometry)
-  {
+std::shared_ptr<Geometry> ClusterLabelDisplay::getGeometry() {
+  if (!m_geometry) {
     ROS_ERROR("Label Display: Geometry requested, but none available!");
   }
   return m_geometry;
 }
 
-void ClusterLabelDisplay::setData(shared_ptr<Geometry> geometry, vector<Cluster> clusters)
-{
-  if (has_data)
-  {
-    ROS_WARN("Label Display: already has data, but setData() was called again!");
+void ClusterLabelDisplay::setData(shared_ptr<Geometry> geometry,
+                                  vector<Cluster> clusters) {
+  if (has_data) {
+    ROS_WARN(
+        "Label Display: already has data, but setData() was called again!");
   }
 
   // Copy data
   m_geometry = geometry;
   m_clusterList = clusters;
-  m_clusterList.insert(m_clusterList.begin(), Cluster("__NEW__", vector<uint32_t>()));
+  m_clusterList.insert(m_clusterList.begin(),
+                       Cluster("__NEW__", vector<uint32_t>()));
 
   // Set flag
   ROS_INFO("Label Display: received data");
@@ -155,19 +154,14 @@ void ClusterLabelDisplay::setData(shared_ptr<Geometry> geometry, vector<Cluster>
 // =====================================================================================================================
 // Callbacks
 
-void ClusterLabelDisplay::onInitialize()
-{
+void ClusterLabelDisplay::onInitialize() {
   // Look for an existing label tool or create a new one
   initializeLabelTool();
 }
 
-void ClusterLabelDisplay::onEnable()
-{
-  updateMap();
-}
+void ClusterLabelDisplay::onEnable() { updateMap(); }
 
-void ClusterLabelDisplay::onDisable()
-{
+void ClusterLabelDisplay::onDisable() {
   m_visuals.clear();
   m_phantomVisual.reset();
   m_tool->resetVisual();
@@ -176,28 +170,26 @@ void ClusterLabelDisplay::onDisable()
 // =====================================================================================================================
 // Callbacks triggered from UI events (mostly)
 
-void ClusterLabelDisplay::changeVisual()
-{
-  if (m_activeVisualProperty->getStdString().empty())
-  {
+void ClusterLabelDisplay::changeVisual() {
+  if (m_activeVisualProperty->getStdString().empty()) {
     ROS_ERROR("Label Display: Should change visual but no visual selected!");
     return;
   }
 
-  ROS_INFO_STREAM("Label Display: Changed active visual to '" << m_activeVisualProperty->getStdString() << "'");
+  ROS_INFO_STREAM("Label Display: Changed active visual to '"
+                  << m_activeVisualProperty->getStdString() << "'");
 
   m_activeVisualId = m_activeVisualProperty->getOptionInt();
 
-  // Active visual has changed, notify label tool that it has to refresh its pointer on the active visual
+  // Active visual has changed, notify label tool that it has to refresh its
+  // pointer on the active visual
   notifyLabelTool();
 }
 
-void ClusterLabelDisplay::updateMap()
-{
+void ClusterLabelDisplay::updateMap() {
   ROS_INFO("Label Display: Update");
 
-  if (!has_data)
-  {
+  if (!has_data) {
     ROS_WARN("Label Display: No data available! Can't show map");
     return;
   }
@@ -214,7 +206,8 @@ void ClusterLabelDisplay::updateMap()
   // Create a phantom visual if it is enabled
   updatePhantomVisual();
 
-  // Notify label tool for changes. The label tool should now destroy its visual and get a new one from this obj
+  // Notify label tool for changes. The label tool should now destroy its visual
+  // and get a new one from this obj
   notifyLabelTool();
 
   // Apply the default colors to the visuals
@@ -227,85 +220,80 @@ void ClusterLabelDisplay::updateMap()
   setStatus(rviz::StatusProperty::Ok, "Map", "");
 }
 
-void ClusterLabelDisplay::updateColors()
-{
-  for (int i = 0; i < m_colorProperties.size(); i++)
-  {
+void ClusterLabelDisplay::updateColors() {
+  for (int i = 0; i < m_colorProperties.size(); i++) {
     auto colorProp = m_colorProperties[i];
-    m_visuals[i]->setColor(colorProp->getOgreColor(), m_alphaProperty->getFloat());
+    m_visuals[i]->setColor(colorProp->getOgreColor(),
+                           m_alphaProperty->getFloat());
   }
 }
 
-void ClusterLabelDisplay::updateSphereSize()
-{
+void ClusterLabelDisplay::updateSphereSize() {
   m_tool->setSphereSize(m_sphereSizeProperty->getFloat());
 }
 
-void ClusterLabelDisplay::updatePhantomVisual()
-{
-  if (!m_phantomVisualProperty->getBool())
-  {
+void ClusterLabelDisplay::updatePhantomVisual() {
+  if (!m_phantomVisualProperty->getBool()) {
     m_phantomVisual.reset(nullptr);
-  }
-  else if (!m_phantomVisual)
-  {
+  } else if (!m_phantomVisual) {
     createPhantomVisual();
   }
 }
 
-void ClusterLabelDisplay::fillPropertyOptions()
-{
+void ClusterLabelDisplay::fillPropertyOptions() {
   // Clear options
   m_activeVisualProperty->clearOptions();
   m_colorsProperty->removeChildren();
   m_colorProperties.clear();
 
-  for (int i = 0; i < m_clusterList.size(); i++)
-  {
+  for (int i = 0; i < m_clusterList.size(); i++) {
     // Add cluster labels to dropdown menu
-    m_activeVisualProperty->addOption(QString::fromStdString(m_clusterList[i].name), i);
+    m_activeVisualProperty->addOption(
+        QString::fromStdString(m_clusterList[i].name), i);
 
     // Add color options
-    Ogre::ColourValue rainbowColor = getRainbowColor((((float)i + 1) / m_clusterList.size()));
+    Ogre::ColourValue rainbowColor =
+        getRainbowColor((((float)i + 1) / m_clusterList.size()));
     m_colorProperties.emplace_back(new rviz::ColorProperty(
         QString::fromStdString(m_clusterList[i].name),
-        QColor(rainbowColor.r * 255, rainbowColor.g * 255, rainbowColor.b * 255),
-        QString::fromStdString(m_clusterList[i].name), m_colorsProperty, SLOT(updateColors()), this));
+        QColor(rainbowColor.r * 255, rainbowColor.g * 255,
+               rainbowColor.b * 255),
+        QString::fromStdString(m_clusterList[i].name), m_colorsProperty,
+        SLOT(updateColors()), this));
   }
 }
 
 // =====================================================================================================================
 // Visuals logic
 
-void ClusterLabelDisplay::createVisualsFromClusterList()
-{
+void ClusterLabelDisplay::createVisualsFromClusterList() {
   // Destroy all current visuals
-  if (!m_visuals.empty())
-  {
+  if (!m_visuals.empty()) {
     m_visuals.clear();
   }
 
   // Create a visual for each entry in the cluster list
-  float colorIndex = 0.0;  // index for coloring
-  for (int i = 0; i < m_clusterList.size(); i++)
-  {
+  float colorIndex = 0.0; // index for coloring
+  for (int i = 0; i < m_clusterList.size(); i++) {
     std::stringstream ss;
     ss << "ClusterLabelVisual_" << i;
 
-    auto visual = std::make_shared<ClusterLabelVisual>(context_, ss.str(), m_geometry);
-    ROS_DEBUG_STREAM("Label Display: Create visual for label '" << m_clusterList[i].name << "'");
+    auto visual =
+        std::make_shared<ClusterLabelVisual>(context_, ss.str(), m_geometry);
+    ROS_DEBUG_STREAM("Label Display: Create visual for label '"
+                     << m_clusterList[i].name << "'");
     visual->setFacesInCluster(m_clusterList[i].faces);
-    visual->setColor(getRainbowColor((++colorIndex / m_clusterList.size())), m_alphaProperty->getFloat());
+    visual->setColor(getRainbowColor((++colorIndex / m_clusterList.size())),
+                     m_alphaProperty->getFloat());
     m_visuals.push_back(visual);
   }
 }
 
-void ClusterLabelDisplay::createPhantomVisual()
-{
-  m_phantomVisual.reset(new ClusterLabelVisual(context_, "ClusterLabelPhantomVisual", m_geometry));
+void ClusterLabelDisplay::createPhantomVisual() {
+  m_phantomVisual.reset(new ClusterLabelVisual(
+      context_, "ClusterLabelPhantomVisual", m_geometry));
   vector<uint32_t> allFacesVector;
-  for (uint32_t i = 0; i < m_geometry->faces.size(); i++)
-  {
+  for (uint32_t i = 0; i < m_geometry->faces.size(); i++) {
     allFacesVector.push_back(i);
   }
   m_phantomVisual->setFacesInCluster(allFacesVector);
@@ -315,41 +303,37 @@ void ClusterLabelDisplay::createPhantomVisual()
 // =====================================================================================================================
 // Label tool
 
-void ClusterLabelDisplay::initializeLabelTool()
-{
+void ClusterLabelDisplay::initializeLabelTool() {
   // Check if the cluster label tool is already opened
-  rviz::ToolManager* toolManager = context_->getToolManager();
+  rviz::ToolManager *toolManager = context_->getToolManager();
   QStringList toolClasses = toolManager->getToolClasses();
   bool foundTool = false;
-  for (int i = 0; i < toolClasses.size(); i++)
-  {
-    if (toolClasses.at(i).contains("ClusterLabel"))
-    {
-      m_tool = static_cast<ClusterLabelTool*>(toolManager->getTool(i));
+  for (int i = 0; i < toolClasses.size(); i++) {
+    if (toolClasses.at(i).contains("ClusterLabel")) {
+      m_tool = static_cast<ClusterLabelTool *>(toolManager->getTool(i));
       foundTool = true;
       break;
     }
   }
 
-  if (!foundTool)
-  {
-    m_tool = static_cast<ClusterLabelTool*>(context_->getToolManager()->addTool("rviz_map_plugin/ClusterLabel"));
+  if (!foundTool) {
+    m_tool = static_cast<ClusterLabelTool *>(
+        context_->getToolManager()->addTool("rviz_map_plugin/ClusterLabel"));
   }
 }
 
-void ClusterLabelDisplay::notifyLabelTool()
-{
+void ClusterLabelDisplay::notifyLabelTool() {
   m_tool->setVisual(m_visuals[m_activeVisualId]);
 }
 
-void ClusterLabelDisplay::addLabel(std::string label, std::vector<uint32_t> faces)
-{
+void ClusterLabelDisplay::addLabel(std::string label,
+                                   std::vector<uint32_t> faces) {
   ROS_INFO_STREAM("Cluster Label Display: add label '" << label << "'");
 
   Q_EMIT signalAddLabel(Cluster(label, faces));
 }
 
-}  // End namespace rviz_map_plugin
+} // End namespace rviz_map_plugin
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(rviz_map_plugin::ClusterLabelDisplay, rviz::Display)

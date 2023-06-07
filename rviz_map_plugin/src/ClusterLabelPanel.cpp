@@ -48,21 +48,19 @@
 
 #include <ClusterLabelPanel.hpp>
 
-#include <QPainter>
-#include <QLineEdit>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QTimer>
+#include <QLineEdit>
+#include <QPainter>
 #include <QPushButton>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #include <rviz/tool_manager.h>
 
-namespace rviz_map_plugin
-{
-ClusterLabelPanel::ClusterLabelPanel(QWidget* parent) : rviz::Panel(parent)
-{
-  QHBoxLayout* clusterNameLayout = new QHBoxLayout();
+namespace rviz_map_plugin {
+ClusterLabelPanel::ClusterLabelPanel(QWidget *parent) : rviz::Panel(parent) {
+  QHBoxLayout *clusterNameLayout = new QHBoxLayout();
   clusterNameLayout->addWidget(new QLabel("Cluster Name:"));
   m_clusterNameEditor = new QLineEdit();
   clusterNameLayout->addWidget(m_clusterNameEditor);
@@ -71,43 +69,41 @@ ClusterLabelPanel::ClusterLabelPanel(QWidget* parent) : rviz::Panel(parent)
 
   m_resetFacesButton = new QPushButton("Reset Faces");
 
-  QVBoxLayout* layout = new QVBoxLayout();
+  QVBoxLayout *layout = new QVBoxLayout();
   layout->addLayout(clusterNameLayout);
   layout->addWidget(m_createClusterButton);
   layout->addWidget(m_resetFacesButton);
   setLayout(layout);
 
   // Make signal/slot connections
-  connect(m_clusterNameEditor, SIGNAL(editingFinished()), this, SLOT(updateClusterName()));
+  connect(m_clusterNameEditor, SIGNAL(editingFinished()), this,
+          SLOT(updateClusterName()));
 
   connect(m_createClusterButton, SIGNAL(released()), this, SLOT(publish()));
   connect(m_resetFacesButton, SIGNAL(released()), this, SLOT(resetFaces()));
 }
 
-void ClusterLabelPanel::onInitialize()
-{
+void ClusterLabelPanel::onInitialize() {
   // Check if the cluster label tool is already opened
-  rviz::ToolManager* toolManager = vis_manager_->getToolManager();
+  rviz::ToolManager *toolManager = vis_manager_->getToolManager();
   QStringList toolClasses = toolManager->getToolClasses();
   bool foundTool = false;
-  for (int i = 0; i < toolClasses.size(); i++)
-  {
-    if (toolClasses.at(i).contains("ClusterLabel"))
-    {
-      m_tool = static_cast<ClusterLabelTool*>(toolManager->getTool(i));
+  for (int i = 0; i < toolClasses.size(); i++) {
+    if (toolClasses.at(i).contains("ClusterLabel")) {
+      m_tool = static_cast<ClusterLabelTool *>(toolManager->getTool(i));
       foundTool = true;
       break;
     }
   }
 
-  if (!foundTool)
-  {
-    m_tool = static_cast<ClusterLabelTool*>(vis_manager_->getToolManager()->addTool("rviz_map_plugin/ClusterLabel"));
+  if (!foundTool) {
+    m_tool =
+        static_cast<ClusterLabelTool *>(vis_manager_->getToolManager()->addTool(
+            "rviz_map_plugin/ClusterLabel"));
   }
 }
 
-void ClusterLabelPanel::setClusterName(const QString& clusterName)
-{
+void ClusterLabelPanel::setClusterName(const QString &clusterName) {
   m_clusterName = clusterName;
   Q_EMIT configChanged();
 
@@ -115,31 +111,26 @@ void ClusterLabelPanel::setClusterName(const QString& clusterName)
   m_createClusterButton->setEnabled(m_clusterName != "");
 }
 
-void ClusterLabelPanel::updateClusterName()
-{
+void ClusterLabelPanel::updateClusterName() {
   setClusterName(m_clusterNameEditor->text());
 }
 
-void ClusterLabelPanel::publish()
-{
+void ClusterLabelPanel::publish() {
   ROS_INFO("Label Panel: Publish");
   m_tool->publishLabel(m_clusterName.toStdString());
 }
 
-void ClusterLabelPanel::resetFaces()
-{
+void ClusterLabelPanel::resetFaces() {
   ROS_INFO("Label panel: Reset");
   m_tool->resetFaces();
 }
 
-void ClusterLabelPanel::save(rviz::Config config) const
-{
+void ClusterLabelPanel::save(rviz::Config config) const {
   rviz::Panel::save(config);
   config.mapSetValue("ClusterName", m_clusterName);
 }
 
-void ClusterLabelPanel::load(const rviz::Config& config)
-{
+void ClusterLabelPanel::load(const rviz::Config &config) {
   rviz::Panel::load(config);
   QString clusterName;
   if (config.mapGetString("ClusterName", &clusterName))
@@ -150,7 +141,7 @@ void ClusterLabelPanel::load(const rviz::Config& config)
   }
 }
 
-}  // End namespace rviz_map_plugin
+} // End namespace rviz_map_plugin
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(rviz_map_plugin::ClusterLabelPanel, rviz::Panel)

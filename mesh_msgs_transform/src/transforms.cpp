@@ -42,84 +42,71 @@
  *  author: Sebastian Pütz <spuetz@uni-osnabrueck.de>
  */
 
-
-
 #include "mesh_msgs_transform/transforms.h"
 #include <Eigen/Eigen>
 
-namespace mesh_msgs_transform{
+namespace mesh_msgs_transform {
 
-inline void vectorTfToEigen(tf::Vector3& tf_vec, Eigen::Vector3d& eigen_vec){
+inline void vectorTfToEigen(tf::Vector3 &tf_vec, Eigen::Vector3d &eigen_vec) {
   eigen_vec(0) = tf_vec[0];
   eigen_vec(1) = tf_vec[1];
   eigen_vec(2) = tf_vec[2];
 }
 
-inline void pointMsgToEigen(const geometry_msgs::Point& gm_point, Eigen::Vector3d& eigen_point){
+inline void pointMsgToEigen(const geometry_msgs::Point &gm_point,
+                            Eigen::Vector3d &eigen_point) {
   eigen_point(0) = gm_point.x;
   eigen_point(1) = gm_point.y;
   eigen_point(2) = gm_point.z;
 }
 
-inline void pointEigenToMsg(const Eigen::Vector3d& eigen_point, geometry_msgs::Point& gm_point){
+inline void pointEigenToMsg(const Eigen::Vector3d &eigen_point,
+                            geometry_msgs::Point &gm_point) {
   gm_point.x = eigen_point(0);
   gm_point.y = eigen_point(1);
   gm_point.z = eigen_point(2);
 }
 
-bool transformGeometryMeshNoTime(
-    const std::string& target_frame,
-    const mesh_msgs::MeshGeometryStamped& mesh_in,
-    const std::string& fixed_frame,
-    mesh_msgs::MeshGeometryStamped& mesh_out,
-    const tf::TransformListener&  tf_listener
-)
-{
+bool transformGeometryMeshNoTime(const std::string &target_frame,
+                                 const mesh_msgs::MeshGeometryStamped &mesh_in,
+                                 const std::string &fixed_frame,
+                                 mesh_msgs::MeshGeometryStamped &mesh_out,
+                                 const tf::TransformListener &tf_listener) {
   tf::StampedTransform transform;
-  try{
-    tf_listener.lookupTransform (
-      target_frame,
-      ros::Time(0), mesh_in.header.frame_id,
-      ros::Time(0),
-      fixed_frame,
-      transform
-    );
-  }
-  catch (tf::LookupException &e){
-   ROS_ERROR ("%s", e.what ());
-   return false;
-  }
-  catch (tf::ExtrapolationException &e){
-   ROS_ERROR ("%s", e.what ());
-   return false;
+  try {
+    tf_listener.lookupTransform(target_frame, ros::Time(0),
+                                mesh_in.header.frame_id, ros::Time(0),
+                                fixed_frame, transform);
+  } catch (tf::LookupException &e) {
+    ROS_ERROR("%s", e.what());
+    return false;
+  } catch (tf::ExtrapolationException &e) {
+    ROS_ERROR("%s", e.what());
+    return false;
   }
 
-  tf::Quaternion quaternion = transform.getRotation ();
-  Eigen::Quaterniond rotation (
-    quaternion.w (),
-    quaternion.x (),
-    quaternion.y (),
-    quaternion.z ()
-  );
+  tf::Quaternion quaternion = transform.getRotation();
+  Eigen::Quaterniond rotation(quaternion.w(), quaternion.x(), quaternion.y(),
+                              quaternion.z());
 
-  tf::Vector3 origin = transform.getOrigin ();
+  tf::Vector3 origin = transform.getOrigin();
   Eigen::Vector3d eigen_origin;
   vectorTfToEigen(origin, eigen_origin);
-  Eigen::Translation3d translation ( eigen_origin );
+  Eigen::Translation3d translation(eigen_origin);
   Eigen::Affine3d transformation = translation * rotation;
 
-  if (&mesh_in != &mesh_out){
+  if (&mesh_in != &mesh_out) {
     mesh_out.header = mesh_in.header;
     mesh_out.header.stamp = ros::Time::now();
     mesh_out.mesh_geometry.faces = mesh_in.mesh_geometry.faces;
   }
 
   mesh_out.mesh_geometry.vertices.resize(mesh_in.mesh_geometry.vertices.size());
-  mesh_out.mesh_geometry.vertex_normals.resize(mesh_in.mesh_geometry.vertex_normals.size());
+  mesh_out.mesh_geometry.vertex_normals.resize(
+      mesh_in.mesh_geometry.vertex_normals.size());
 
   // transform vertices
-  for(size_t i = 0; i < mesh_in.mesh_geometry.vertices.size(); i++)
-  {
+  for (size_t i = 0; i < mesh_in.mesh_geometry.vertices.size(); i++) {
     Eigen::Vector3d in_vec, out_vec;
     pointMsgToEigen(mesh_in.mesh_geometry.vertices[i], in_vec);
     out_vec = transformation * in_vec;
@@ -127,8 +114,7 @@ bool transformGeometryMeshNoTime(
   }
 
   // rotate normals
-  for(size_t i = 0; i < mesh_in.mesh_geometry.vertex_normals.size(); i++)
-  {
+  for (size_t i = 0; i < mesh_in.mesh_geometry.vertex_normals.size(); i++) {
     Eigen::Vector3d in_vec, out_vec;
     pointMsgToEigen(mesh_in.mesh_geometry.vertex_normals[i], in_vec);
     out_vec = transformation.rotation() * in_vec;
@@ -141,4 +127,4 @@ bool transformGeometryMeshNoTime(
   return true;
 }
 
-} /* namespace mesh_msgs_transforms */
+} // namespace mesh_msgs_transform

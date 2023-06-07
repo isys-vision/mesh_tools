@@ -53,40 +53,38 @@
 #ifndef MESH_VISUAL_HPP
 #define MESH_VISUAL_HPP
 
-#include <mesh_msgs/MeshGeometryStamped.h>
 #include <mesh_msgs/MeshGeometry.h>
-#include <mesh_msgs/MeshVertexColorsStamped.h>
-#include <mesh_msgs/MeshVertexColors.h>
-#include <mesh_msgs/MeshVertexCostsStamped.h>
-#include <mesh_msgs/MeshVertexCosts.h>
-#include <mesh_msgs/MeshMaterialsStamped.h>
-#include <mesh_msgs/MeshMaterials.h>
+#include <mesh_msgs/MeshGeometryStamped.h>
 #include <mesh_msgs/MeshMaterial.h>
+#include <mesh_msgs/MeshMaterials.h>
+#include <mesh_msgs/MeshMaterialsStamped.h>
 #include <mesh_msgs/MeshTexture.h>
+#include <mesh_msgs/MeshVertexColors.h>
+#include <mesh_msgs/MeshVertexColorsStamped.h>
+#include <mesh_msgs/MeshVertexCosts.h>
+#include <mesh_msgs/MeshVertexCostsStamped.h>
 
 #include <sensor_msgs/Image.h>
 
 #include <rviz/display_context.h>
 #include <rviz/frame_manager.h>
 
-#include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreSceneManager.h>
-#include <OGRE/OgreManualObject.h>
-#include <OGRE/OgreEntity.h>
-#include <OGRE/OgreMaterialManager.h>
-#include <OGRE/OgreColourValue.h>
 #include <OGRE/Ogre.h>
+#include <OGRE/OgreColourValue.h>
+#include <OGRE/OgreEntity.h>
+#include <OGRE/OgreManualObject.h>
+#include <OGRE/OgreMaterialManager.h>
+#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
 
 #include <Types.hpp>
 #include <vector>
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 /**
  * @brief Class to display mesh data in the main panel of rviz.
  */
-class MeshVisual
-{
+class MeshVisual {
 public:
   /**
    * @brief Constructor.
@@ -96,7 +94,8 @@ public:
    * @param meshID The mesh id
    * @param randomID random number that will be used as part of the meshes UID
    */
-  MeshVisual(rviz::DisplayContext* context, size_t displayID, size_t meshID, size_t randomID);
+  MeshVisual(rviz::DisplayContext *context, size_t displayID, size_t meshID,
+             size_t randomID);
 
   /**
    * @brief Destructor.
@@ -113,46 +112,50 @@ public:
    *
    * @param geometry Geometry containing the mesh
    */
-  bool setGeometry(const Geometry& geometry);
+  bool setGeometry(const Geometry &geometry);
 
   /**
    * @brief Passes the normal data to the mesh visual
    *
    * @param normals Vector containing the normal data
    */
-  bool setNormals(const std::vector<Normal>& normals);
+  bool setNormals(const std::vector<Normal> &normals);
 
   /**
    * @brief Extracts data from the ros-messages and creates a colored mesh.
    *
    * @param vertexColors Vector containing the vertex color information
    */
-  bool setVertexColors(const std::vector<Color>& vertexColors);
+  bool setVertexColors(const std::vector<Color> &vertexColors);
 
   /**
-   * @brief Extracts data from the ros-messages and creates a colored mesh with colors calculated from vertex costs.
+   * @brief Extracts data from the ros-messages and creates a colored mesh with
+   * colors calculated from vertex costs.
    *
    * @param vertexCosts Vector containing the vertex cost information
    */
-  bool setVertexCosts(const std::vector<float>& vertexCosts);
+  bool setVertexCosts(const std::vector<float> &vertexCosts);
 
   /**
-   * @brief Extracts data from the ros-messages and creates a colored mesh with colors calculated from vertex costs.
+   * @brief Extracts data from the ros-messages and creates a colored mesh with
+   * colors calculated from vertex costs.
    *
    * @param vertexCosts Vector containing the vertex cost information
    * @param costColorType colorization method (0 = rainbow; 1 = red-green)
    */
-  bool setVertexCosts(const std::vector<float>& vertexCosts, int costColorType);
+  bool setVertexCosts(const std::vector<float> &vertexCosts, int costColorType);
 
   /**
-   * @brief Extracts data from the ros-messages and creates a colored mesh with colors calculated from vertex costs.
+   * @brief Extracts data from the ros-messages and creates a colored mesh with
+   * colors calculated from vertex costs.
    *
    * @param vertexCosts Vector containing the vertex cost information
    * @param costColorType colorization method (0 = rainbow; 1 = red-green)
    * @param minCost minimum value for colorization
    * @param maxCost maximum value for colorization
    */
-  bool setVertexCosts(const std::vector<float>& vertexCosts, int costColorType, float minCost, float maxCost);
+  bool setVertexCosts(const std::vector<float> &vertexCosts, int costColorType,
+                      float minCost, float maxCost);
 
   /**
    * @brief Extracts data from the ros-messages and creates a textured mesh.
@@ -160,32 +163,35 @@ public:
    * @param materials Vector containing all materials
    * @param texCoords Vector containing all texture coordinates
    */
-  bool setMaterials(const vector<Material>& materials, const vector<TexCoords>& texCoords);
+  bool setMaterials(const vector<Material> &materials,
+                    const vector<TexCoords> &texCoords);
 
   /**
-   * @brief Extracts data from the ros-messages and adds textures to the textured mesh.
+   * @brief Extracts data from the ros-messages and adds textures to the
+   * textured mesh.
    *
    * @param texture       Texture containing the texture information and data
    * @param textureIndex  Index of the texture
    */
-  bool addTexture(Texture& texture, uint32_t textureIndex);
+  bool addTexture(Texture &texture, uint32_t textureIndex);
 
   /**
    * @brief Sets the pose of the coordinate frame the message refers to.
    *
    * @param position The pose of the coordinate frame
    */
-  void setFramePosition(const Ogre::Vector3& position);
+  void setFramePosition(const Ogre::Vector3 &position);
 
   /**
    * @brief Sets the orientation of the coordinate frame the message refers to.
    *
    * @param orientation The orientation of the coordinate frame
    */
-  void setFrameOrientation(const Ogre::Quaternion& orientation);
+  void setFrameOrientation(const Ogre::Quaternion &orientation);
 
   /**
-   * @brief Updates the visible parts of the mesh depending on input from the rviz display.
+   * @brief Updates the visible parts of the mesh depending on input from the
+   * rviz display.
    *
    * @param showFaces             When TRUE faces are visible
    * @param facesColor            The color of the faces
@@ -195,11 +201,14 @@ public:
    * @param showTextures          When TRUE textures are visible
    * @param showTexturedFacesOnly When TRUE only textured faces are visible
    */
-  void updateMaterial(bool showFaces, Ogre::ColourValue facesColor, float facesAlpha, bool useVertexColors,
-                      bool showVertexCosts, bool showTextures, bool showTexturedFacesOnly);
+  void updateMaterial(bool showFaces, Ogre::ColourValue facesColor,
+                      float facesAlpha, bool useVertexColors,
+                      bool showVertexCosts, bool showTextures,
+                      bool showTexturedFacesOnly);
 
   /**
-   * @brief Updates the visible parts of the mesh depending on input from the rviz display.
+   * @brief Updates the visible parts of the mesh depending on input from the
+   * rviz display.
    *
    * @param showWireframe         When TRUE wireframe is visible
    * @param wireframeColor        The color of the wireframe
@@ -216,9 +225,12 @@ public:
    * @param normalsAlpha          The transparency of the normals
    * @param normalsScallingFactor The size of the normals
    */
-  void updateMaterial(bool showWireframe, Ogre::ColourValue wireframeColor, float wireframeAlpha, bool showFaces,
-                      Ogre::ColourValue facesColor, float facesAlpha, bool useVertexColors, bool showVertexCosts,
-                      bool showTextures, bool showTexturedFacesOnly, bool showNormals, Ogre::ColourValue normalsColor,
+  void updateMaterial(bool showWireframe, Ogre::ColourValue wireframeColor,
+                      float wireframeAlpha, bool showFaces,
+                      Ogre::ColourValue facesColor, float facesAlpha,
+                      bool useVertexColors, bool showVertexCosts,
+                      bool showTextures, bool showTexturedFacesOnly,
+                      bool showNormals, Ogre::ColourValue normalsColor,
                       float normalsAlpha, float normalsScallingFactor);
 
   /**
@@ -235,7 +247,8 @@ public:
    * @param normalsColor      The color of the normals
    * @param normalsAlpha      The transparency of the normals
    */
-  void updateNormals(bool showNormals, Ogre::ColourValue normalsColor, float normalsAlpha);
+  void updateNormals(bool showNormals, Ogre::ColourValue normalsColor,
+                     float normalsAlpha);
 
   /**
    * @brief Updates the normals dynamically.
@@ -245,7 +258,8 @@ public:
    * @param normalsAlpha      The transparency of the normals
    * @param scalingFactor     The factor the normals have to be scaled with
    */
-  void updateNormals(bool showNormals, Ogre::ColourValue normalsColor, float normalsAlpha, float scalingFactor);
+  void updateNormals(bool showNormals, Ogre::ColourValue normalsColor,
+                     float normalsAlpha, float scalingFactor);
 
   /**
    * @brief Updates the wireframe dynamically.
@@ -254,7 +268,8 @@ public:
    * @param wireframeColor    The color of the wireframe
    * @param wireframeAlpha    The transparency of the wireframe
    */
-  void updateWireframe(bool showWireframe, Ogre::ColourValue wireframeColor, float wireframeAlpha);
+  void updateWireframe(bool showWireframe, Ogre::ColourValue wireframeColor,
+                       float wireframeAlpha);
 
 private:
   /**
@@ -263,29 +278,38 @@ private:
    * @param wireframeColor The color of the wireframe
    * @param wireframeAlpha Transparency of the wireframe
    */
-  void showWireframe(Ogre::Pass* pass, Ogre::ColourValue wireframeColor, float wireframeAlpha);
+  void showWireframe(Ogre::Pass *pass, Ogre::ColourValue wireframeColor,
+                     float wireframeAlpha);
 
   /**
    * @brief
    */
-  void showFaces(Ogre::Pass* pass, Ogre::ColourValue facesColor, float facesAlpha, bool useVertexColors);
+  void showFaces(Ogre::Pass *pass, Ogre::ColourValue facesColor,
+                 float facesAlpha, bool useVertexColors);
 
-  void showNormals(Ogre::Pass* pass, Ogre::ColourValue normalsColor, float normalsAlpha);
+  void showNormals(Ogre::Pass *pass, Ogre::ColourValue normalsColor,
+                   float normalsAlpha);
 
-  void showTextures(Ogre::Pass* pass);
+  void showTextures(Ogre::Pass *pass);
 
-  void enteringGeneralTriangleMesh(const Geometry& mesh);
+  void enteringGeneralTriangleMesh(const Geometry &mesh);
 
-  void enteringColoredTriangleMesh(const Geometry& mesh, const vector<Color>& vertexColors);
+  void enteringColoredTriangleMesh(const Geometry &mesh,
+                                   const vector<Color> &vertexColors);
 
-  void enteringTriangleMeshWithVertexCosts(const Geometry& mesh, const vector<float>& vertexCosts, int costColorType);
-  void enteringTriangleMeshWithVertexCosts(const Geometry& mesh, const vector<float>& vertexCosts, int costColorType,
-                                           float minCost, float maxCost);
+  void enteringTriangleMeshWithVertexCosts(const Geometry &mesh,
+                                           const vector<float> &vertexCosts,
+                                           int costColorType);
+  void enteringTriangleMeshWithVertexCosts(const Geometry &mesh,
+                                           const vector<float> &vertexCosts,
+                                           int costColorType, float minCost,
+                                           float maxCost);
 
-  void enteringTexturedTriangleMesh(const Geometry& mesh, const vector<Material>& meshMaterials,
-                                    const vector<TexCoords>& texCoords);
+  void enteringTexturedTriangleMesh(const Geometry &mesh,
+                                    const vector<Material> &meshMaterials,
+                                    const vector<TexCoords> &texCoords);
 
-  void enteringNormals(const Geometry& mesh, const vector<Normal>& normals);
+  void enteringNormals(const Geometry &mesh, const vector<Normal> &normals);
 
   Ogre::PixelFormat getOgrePixelFormatFromRosString(std::string encoding);
 
@@ -293,7 +317,8 @@ private:
 
   /**
    *
-   * @brief Calculates a color for a given cost value using a spectrum from red to green.
+   * @brief Calculates a color for a given cost value using a spectrum from red
+   * to green.
    *
    * @param cost The cost value (should be within the range 0 - 1)
    *
@@ -309,10 +334,10 @@ private:
   bool m_textures_enabled;
 
   /// Ogre Scenenode
-  Ogre::SceneNode* m_sceneNode;
+  Ogre::SceneNode *m_sceneNode;
 
   /// The context that contains the display information.
-  rviz::DisplayContext* m_displayContext;
+  rviz::DisplayContext *m_displayContext;
 
   /// First ID of the created mesh
   size_t m_prefix;
@@ -324,19 +349,19 @@ private:
   size_t m_random;
 
   /// The mesh-object to display
-  Ogre::ManualObject* m_mesh;
+  Ogre::ManualObject *m_mesh;
 
   /// The manual object to display normals
-  Ogre::ManualObject* m_normals;
+  Ogre::ManualObject *m_normals;
 
   /// The manual object to display the mesh with vertex costs
-  Ogre::ManualObject* m_vertexCostsMesh;
+  Ogre::ManualObject *m_vertexCostsMesh;
 
   /// The manual object to display the textured mesh
-  Ogre::ManualObject* m_texturedMesh;
+  Ogre::ManualObject *m_texturedMesh;
 
   /// The manual object to display the not textured parts of the textured mesh
-  Ogre::ManualObject* m_noTexCluMesh;
+  Ogre::ManualObject *m_noTexCluMesh;
 
   // The textures for the mesh
   std::vector<Ogre::Image> m_images;
@@ -371,6 +396,6 @@ private:
   /// raw normals
   std::vector<Normal> m_geometryNormals;
 };
-}  // End namespace rviz_map_plugin
+} // End namespace rviz_map_plugin
 
 #endif

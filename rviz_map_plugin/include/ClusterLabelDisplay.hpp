@@ -51,62 +51,61 @@
 
 #include <Types.hpp>
 
-#include <vector>
-#include <map>
-#include <memory>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
+#include <map>
+#include <memory>
+#include <vector>
 
-#include <string>
-#include <math.h>
 #include <algorithm>
+#include <math.h>
+#include <string>
 
-#include <QMessageBox>
 #include <QApplication>
 #include <QIcon>
+#include <QMessageBox>
 
-#include <ros/ros.h>
 #include <ros/console.h>
-#include <rviz/viewport_mouse_event.h>
-#include <rviz/visualization_manager.h>
-#include <rviz/visualization_frame.h>
+#include <ros/ros.h>
 #include <rviz/geometry.h>
+#include <rviz/viewport_mouse_event.h>
+#include <rviz/visualization_frame.h>
+#include <rviz/visualization_manager.h>
 
+#include <rviz/display.h>
 #include <rviz/display_context.h>
 #include <rviz/frame_manager.h>
-#include <rviz/display.h>
 
+#include <rviz/display_group.h>
 #include <rviz/tool.h>
 #include <rviz/tool_manager.h>
-#include <rviz/display_group.h>
 
-#include <std_msgs/Int32.h>
 #include <geometry_msgs/Point32.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <mesh_msgs/MeshGeometryStamped.h>
-#include <mesh_msgs/MeshGeometry.h>
 #include <mesh_msgs/GetGeometry.h>
 #include <mesh_msgs/GetLabeledClusters.h>
+#include <mesh_msgs/MeshGeometry.h>
+#include <mesh_msgs/MeshGeometryStamped.h>
+#include <std_msgs/Int32.h>
 
 #ifndef Q_MOC_RUN
 #include <rviz/mesh_loader.h>
 
-#include <OGRE/OgreManualObject.h>
-#include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreColourValue.h>
 #include <OGRE/OgreEntity.h>
-#include <OGRE/OgreStringConverter.h>
+#include <OGRE/OgreManualObject.h>
 #include <OGRE/OgreMaterialManager.h>
 #include <OGRE/OgreRay.h>
+#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneQuery.h>
-#include <OGRE/OgreColourValue.h>
+#include <OGRE/OgreStringConverter.h>
 
 #endif
 
-namespace rviz
-{
+namespace rviz {
 // Forward declaration
 class BoolProperty;
 class ColorProperty;
@@ -115,10 +114,9 @@ class IntProperty;
 class EnumProperty;
 class StringProperty;
 
-}  // End namespace rviz
+} // End namespace rviz
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 using std::map;
 using std::shared_ptr;
 using std::string;
@@ -133,8 +131,7 @@ class ClusterLabelTool;
  * @class ClusterLabelDisplay
  * @brief Display class for the map plugin
  */
-class ClusterLabelDisplay : public rviz::Display
-{
+class ClusterLabelDisplay : public rviz::Display {
   Q_OBJECT
 
 public:
@@ -149,8 +146,8 @@ public:
   ~ClusterLabelDisplay();
 
   /**
-   * @brief The tool will call this function and emit the signal below to the master display to
-   *        create the label
+   * @brief The tool will call this function and emit the signal below to the
+   * master display to create the label
    * @param label The label name
    * @param faces The list of face IDs
    */
@@ -169,12 +166,13 @@ public:
 Q_SIGNALS:
 
   /**
-   * @brief This signal is used for delegating new label data to the master display.
+   * @brief This signal is used for delegating new label data to the master
+   * display.
    * @param cluster The cluster
    */
   void signalAddLabel(Cluster cluster);
 
-public Q_SLOTS:  // not sure wether any of those actually need to be q slots ...
+public Q_SLOTS: // not sure wether any of those actually need to be q slots ...
 
   /**
    * @brief Refreshes the tool's current visual
@@ -212,12 +210,14 @@ private Q_SLOTS:
   void updateSphereSize();
 
   /**
-   * @brief Updates the phantom visual, based on newly loaded data since the last update
+   * @brief Updates the phantom visual, based on newly loaded data since the
+   * last update
    */
   void updatePhantomVisual();
 
   /**
-   * @brief Slot for changing the visual to the selected visual from the dropdown menu
+   * @brief Slot for changing the visual to the selected visual from the
+   * dropdown menu
    */
   void changeVisual();
 
@@ -228,7 +228,8 @@ private:
   void onInitialize();
 
   /**
-   * @brief Programmatically create an instance of the label tool from this package
+   * @brief Programmatically create an instance of the label tool from this
+   * package
    */
   void initializeLabelTool();
 
@@ -263,25 +264,26 @@ private:
   vector<Cluster> m_clusterList;
 
   /// Label tool
-  ClusterLabelTool* m_tool;
+  ClusterLabelTool *m_tool;
 
   /// Property for the current active visual
-  rviz::EnumProperty* m_activeVisualProperty;
+  rviz::EnumProperty *m_activeVisualProperty;
 
   /// Property to set transparency
-  rviz::FloatProperty* m_alphaProperty;
+  rviz::FloatProperty *m_alphaProperty;
 
   /// Property for selecting colors (menu)
-  rviz::Property* m_colorsProperty;
+  rviz::Property *m_colorsProperty;
 
   /// Properties for selecting colors (menu-items)
-  std::vector<rviz::ColorProperty*> m_colorProperties;
+  std::vector<rviz::ColorProperty *> m_colorProperties;
 
-  /// Property to set the brushsize of the sphere brush of the label tool from this package
-  rviz::FloatProperty* m_sphereSizeProperty;
+  /// Property to set the brushsize of the sphere brush of the label tool from
+  /// this package
+  rviz::FloatProperty *m_sphereSizeProperty;
 
   /// Property to hide or show a phantom visual
-  rviz::BoolProperty* m_phantomVisualProperty;
+  rviz::BoolProperty *m_phantomVisualProperty;
 
   /// Index for the visuals
   int m_labelToolVisualIndex = 0;
@@ -290,6 +292,6 @@ private:
   bool has_data = false;
 };
 
-}  // end namespace rviz_map_plugin
+} // end namespace rviz_map_plugin
 
 #endif

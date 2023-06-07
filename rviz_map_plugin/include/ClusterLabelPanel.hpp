@@ -49,31 +49,28 @@
 #ifndef CLUSTER_LABEL_PANEL_HPP
 #define CLUSTER_LABEL_PANEL_HPP
 
-#include <Types.hpp>
-#include <ros/ros.h>
+#include <ClusterLabelTool.hpp>
 #include <QObject>
+#include <Types.hpp>
+#include <mesh_msgs/MeshFaceCluster.h>
+#include <ros/ros.h>
 #include <rviz/panel.h>
 #include <rviz/tool_manager.h>
-#include <ClusterLabelTool.hpp>
-#include <mesh_msgs/MeshFaceCluster.h>
 
 // Forward declarations
 class QLineEdit;
 class QPushButton;
 
-namespace rviz
-{
+namespace rviz {
 class Tool;
 }
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 /**
  * @class ClusterLabelPanel
  * @brief Panel for interacting with the label tool
  */
-class ClusterLabelPanel : public rviz::Panel
-{
+class ClusterLabelPanel : public rviz::Panel {
   Q_OBJECT
 
 public:
@@ -81,7 +78,7 @@ public:
    * @brief Constructor
    * @param parent This panel's parent, if available
    */
-  ClusterLabelPanel(QWidget* parent = 0);
+  ClusterLabelPanel(QWidget *parent = 0);
 
   /**
    * @brief RViz callback on inizialize
@@ -92,7 +89,7 @@ public:
    * @brief Load a configuration
    * @input config The configuration
    */
-  virtual void load(const rviz::Config& config);
+  virtual void load(const rviz::Config &config);
 
   /**
    * @brief Save a configuration
@@ -106,7 +103,7 @@ public Q_SLOTS:
    * @brief Set the name under which the current cluster will be saved
    * @param clusterName The new name
    */
-  void setClusterName(const QString& clusterName);
+  void setClusterName(const QString &clusterName);
 
   /**
    * @brief Updates the current cluster name
@@ -125,25 +122,25 @@ public Q_SLOTS:
 
 protected:
   /// Input for entering the cluster name
-  QLineEdit* m_clusterNameEditor;
+  QLineEdit *m_clusterNameEditor;
   /// Input for entering the output topic name
-  QLineEdit* m_outputTopicEditor;
+  QLineEdit *m_outputTopicEditor;
 
   /// Name of the cluster
   QString m_clusterName;
 
   /// Button for creating and publishing the cluster
-  QPushButton* m_createClusterButton;
+  QPushButton *m_createClusterButton;
   /// Button for resetting the current faces in cluster
-  QPushButton* m_resetFacesButton;
+  QPushButton *m_resetFacesButton;
 
   /// Instance of the label tool from this package
-  ClusterLabelTool* m_tool;
+  ClusterLabelTool *m_tool;
 
   /// Node handle
   ros::NodeHandle m_nodeHandle;
 };
 
-}  // end namespace rviz_map_plugin
+} // end namespace rviz_map_plugin
 
 #endif

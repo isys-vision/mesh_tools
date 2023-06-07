@@ -49,70 +49,69 @@
 #ifndef MAP_DISPLAY_HPP
 #define MAP_DISPLAY_HPP
 
-#include <Types.hpp>
 #include "RvizFileProperty.hpp"
+#include <Types.hpp>
 
-#include <vector>
-#include <memory>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
+#include <memory>
+#include <vector>
 
-#include <string>
-#include <math.h>
 #include <algorithm>
 #include <map>
+#include <math.h>
+#include <string>
 
-#include <QMessageBox>
 #include <QApplication>
 #include <QIcon>
+#include <QMessageBox>
 
-#include <ros/ros.h>
 #include <ros/console.h>
-#include <rviz/viewport_mouse_event.h>
-#include <rviz/visualization_manager.h>
-#include <rviz/visualization_frame.h>
+#include <ros/ros.h>
 #include <rviz/geometry.h>
+#include <rviz/viewport_mouse_event.h>
+#include <rviz/visualization_frame.h>
+#include <rviz/visualization_manager.h>
 
+#include <rviz/display.h>
 #include <rviz/display_context.h>
 #include <rviz/frame_manager.h>
-#include <rviz/display.h>
 
+#include <rviz/display_group.h>
 #include <rviz/tool.h>
 #include <rviz/tool_manager.h>
-#include <rviz/display_group.h>
 
-#include <std_msgs/Int32.h>
 #include <geometry_msgs/Point32.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <mesh_msgs/MeshGeometryStamped.h>
-#include <mesh_msgs/MeshGeometry.h>
 #include <mesh_msgs/GetGeometry.h>
 #include <mesh_msgs/GetLabeledClusters.h>
+#include <mesh_msgs/MeshGeometry.h>
+#include <mesh_msgs/MeshGeometryStamped.h>
+#include <std_msgs/Int32.h>
 
 #include <hdf5_map_io/hdf5_map_io.h>
 
 #ifndef Q_MOC_RUN
 #include <rviz/mesh_loader.h>
 
-#include <OGRE/OgreManualObject.h>
-#include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreColourValue.h>
 #include <OGRE/OgreEntity.h>
-#include <OGRE/OgreStringConverter.h>
+#include <OGRE/OgreManualObject.h>
 #include <OGRE/OgreMaterialManager.h>
 #include <OGRE/OgreRay.h>
+#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneQuery.h>
-#include <OGRE/OgreColourValue.h>
+#include <OGRE/OgreStringConverter.h>
 
 #endif
 
 #include <ClusterLabelDisplay.hpp>
 #include <MeshDisplay.hpp>
 
-namespace rviz
-{
+namespace rviz {
 // Forward declaration
 class BoolProperty;
 class ColorProperty;
@@ -121,10 +120,9 @@ class IntProperty;
 class EnumProperty;
 class StringProperty;
 
-}  // End namespace rviz
+} // End namespace rviz
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 using std::shared_ptr;
 using std::string;
 using std::unique_ptr;
@@ -132,10 +130,10 @@ using std::vector;
 
 /**
  * @class MapDisplay
- * @brief Master display for the Mesh- and Cluster- subdisplays. THis implementation uses HDF5 as it's data source
+ * @brief Master display for the Mesh- and Cluster- subdisplays. THis
+ * implementation uses HDF5 as it's data source
  */
-class MapDisplay : public rviz::Display
-{
+class MapDisplay : public rviz::Display {
   Q_OBJECT
 
 public:
@@ -192,7 +190,8 @@ private:
    */
   bool loadData();
 
-  // TODO: make more efficient - currently everything is stored in the MapDisplay, the MeshDisplay and the MeshVisual
+  // TODO: make more efficient - currently everything is stored in the
+  // MapDisplay, the MeshDisplay and the MeshVisual
   /// Geometry
   shared_ptr<Geometry> m_geometry;
   /// Materials
@@ -211,21 +210,21 @@ private:
   std::map<std::string, std::vector<float>> m_costs;
 
   /// Path to map file
-  rviz::FileProperty* m_mapFilePath;
+  rviz::FileProperty *m_mapFilePath;
 
   /// Subdisplay: ClusterLabel (for showing the clusters)
-  rviz_map_plugin::ClusterLabelDisplay* m_clusterLabelDisplay;
+  rviz_map_plugin::ClusterLabelDisplay *m_clusterLabelDisplay;
   /// Subdisplay: MeshDisplay (for showing the mesh)
-  rviz_map_plugin::MeshDisplay* m_meshDisplay;
+  rviz_map_plugin::MeshDisplay *m_meshDisplay;
 
   /**
    * @brief Create a RViz display from it's unique class_id
    * @param class_id The class ID
    * @return Pointer to RViz display
    */
-  rviz::Display* createDisplay(const QString& class_id);
+  rviz::Display *createDisplay(const QString &class_id);
 };
 
-}  // end namespace rviz_map_plugin
+} // end namespace rviz_map_plugin
 
 #endif

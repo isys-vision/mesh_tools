@@ -54,25 +54,23 @@
 
 #include <rviz/display.h>
 
-#include <mesh_msgs/MeshGeometryStamped.h>
-#include <mesh_msgs/MeshGeometry.h>
-#include <OGRE/OgreColourValue.h>
-#include <OGRE/OgrePrerequisites.h>
-#include <OGRE/OgreMesh.h>
-#include <OGRE/OgreSubMesh.h>
 #include <OGRE/Ogre.h>
+#include <OGRE/OgreColourValue.h>
+#include <OGRE/OgreMesh.h>
+#include <OGRE/OgrePrerequisites.h>
+#include <OGRE/OgreSubMesh.h>
+#include <mesh_msgs/MeshGeometry.h>
+#include <mesh_msgs/MeshGeometryStamped.h>
 
 #include <memory>
 #include <vector>
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 /**
  * @class ClusterLabelVisual
  * @brief Visual to show a labeled cluster
  */
-class ClusterLabelVisual
-{
+class ClusterLabelVisual {
 public:
   /**
    * @brief Constructor
@@ -80,7 +78,7 @@ public:
    * @param context The context that contains the display information.
    * @param labelId The label id (that has to be unique)
    */
-  ClusterLabelVisual(rviz::DisplayContext* context, std::string labelId);
+  ClusterLabelVisual(rviz::DisplayContext *context, std::string labelId);
 
   /**
    * @brief Constructor
@@ -89,7 +87,8 @@ public:
    * @param labelId The label id (that has to be unique)
    * @param geometry A shared pointer to the geometry to which the labels belong
    */
-  ClusterLabelVisual(rviz::DisplayContext* context, std::string labelId, std::shared_ptr<Geometry> geometry);
+  ClusterLabelVisual(rviz::DisplayContext *context, std::string labelId,
+                     std::shared_ptr<Geometry> geometry);
 
   /**
    * @brief Destructor
@@ -100,17 +99,18 @@ public:
    * @brief Disabling the copy constructor
    *
    * Each cluster label visual has a pointer to a SubMesh with a unique name,
-   * when copying and then deleting one of the copies, the SubMesh would be deleted, thus the
-   * pointers of the remaining copies would be invalid
+   * when copying and then deleting one of the copies, the SubMesh would be
+   * deleted, thus the pointers of the remaining copies would be invalid
    */
-  ClusterLabelVisual(const ClusterLabelVisual&) = delete;
+  ClusterLabelVisual(const ClusterLabelVisual &) = delete;
 
   /**
    * @brief Disabling the copy assignment operator
    *
-   * explanation: see deleted copy constructor ClusterLabelVisual(const ClusterLabelVisual&)
+   * explanation: see deleted copy constructor ClusterLabelVisual(const
+   * ClusterLabelVisual&)
    */
-  ClusterLabelVisual& operator=(const ClusterLabelVisual&) = delete;
+  ClusterLabelVisual &operator=(const ClusterLabelVisual &) = delete;
 
   /**
    * @brief Deletes the material
@@ -129,7 +129,7 @@ public:
    *
    * @param faces A vector containing the face ids
    */
-  void setFacesInCluster(const std::vector<uint32_t>& faces);
+  void setFacesInCluster(const std::vector<uint32_t> &faces);
 
   /**
    * @brief Sets the color
@@ -144,20 +144,17 @@ public:
    *
    * @return A vector containing the face ids
    */
-  std::vector<uint32_t> getFaces()
-  {
-    return m_faces;
-  };
+  std::vector<uint32_t> getFaces() { return m_faces; };
 
 private:
   void initMaterial();
 
-  rviz::DisplayContext* m_displayContext;
-  Ogre::SceneNode* m_sceneNode;
+  rviz::DisplayContext *m_displayContext;
+  Ogre::SceneNode *m_sceneNode;
   std::string m_labelId;
 
   Ogre::MeshPtr m_mesh;
-  Ogre::SubMesh* m_subMesh;
+  Ogre::SubMesh *m_subMesh;
   Ogre::MaterialPtr m_material;
 
   Ogre::ColourValue m_color;
@@ -166,6 +163,6 @@ private:
   std::vector<uint32_t> m_faces;
 };
 
-}  // end namespace rviz_map_plugin
+} // end namespace rviz_map_plugin
 
 #endif

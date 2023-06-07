@@ -45,20 +45,18 @@
 #ifndef MESH_POSE_TOOL_HPP
 #define MESH_POSE_TOOL_HPP
 
-#include <OGRE/OgreVector3.h>
-#include <OGRE/OgreQuaternion.h>
 #include <OGRE/OgreManualObject.h>
+#include <OGRE/OgreQuaternion.h>
 #include <OGRE/OgreRay.h>
+#include <OGRE/OgreVector3.h>
 
 #include <QCursor>
 #include <ros/ros.h>
-#include <rviz/tool.h>
 #include <rviz/ogre_helpers/arrow.h>
+#include <rviz/tool.h>
 
-namespace rviz_map_plugin
-{
-class MeshPoseTool : public rviz::Tool
-{
+namespace rviz_map_plugin {
+class MeshPoseTool : public rviz::Tool {
 public:
   MeshPoseTool();
   virtual ~MeshPoseTool();
@@ -68,25 +66,26 @@ public:
   virtual void activate();
   virtual void deactivate();
 
-  virtual int processMouseEvent(rviz::ViewportMouseEvent& event);
+  virtual int processMouseEvent(rviz::ViewportMouseEvent &event);
 
 protected:
-  virtual void onPoseSet(const Ogre::Vector3& position, const Ogre::Quaternion& orientation) = 0;
+  virtual void onPoseSet(const Ogre::Vector3 &position,
+                         const Ogre::Quaternion &orientation) = 0;
 
-  void getRawManualObjectData(const Ogre::ManualObject* mesh, const size_t sectionNumber, size_t& vertexCount,
-                              Ogre::Vector3*& vertices, size_t& indexCount, unsigned long*& indices);
+  void getRawManualObjectData(const Ogre::ManualObject *mesh,
+                              const size_t sectionNumber, size_t &vertexCount,
+                              Ogre::Vector3 *&vertices, size_t &indexCount,
+                              unsigned long *&indices);
 
-  bool getPositionAndOrientation(const Ogre::ManualObject* mesh, const Ogre::Ray& ray, Ogre::Vector3& position,
-                                 Ogre::Vector3& orientation);
+  bool getPositionAndOrientation(const Ogre::ManualObject *mesh,
+                                 const Ogre::Ray &ray, Ogre::Vector3 &position,
+                                 Ogre::Vector3 &orientation);
 
-  bool selectTriangle(rviz::ViewportMouseEvent& event, Ogre::Vector3& position, Ogre::Vector3& orientation);
+  bool selectTriangle(rviz::ViewportMouseEvent &event, Ogre::Vector3 &position,
+                      Ogre::Vector3 &orientation);
 
-  rviz::Arrow* arrow_;
-  enum State
-  {
-    Position,
-    Orientation
-  };
+  rviz::Arrow *arrow_;
+  enum State { Position, Orientation };
   State state_;
   Ogre::Vector3 pos_;
   Ogre::Vector3 ori_;

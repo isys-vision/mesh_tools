@@ -57,57 +57,55 @@
 
 #include <CL/cl2.hpp>
 
-#include <vector>
-#include <map>
-#include <memory>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
+#include <map>
+#include <memory>
+#include <vector>
 
-#include <QMessageBox>
 #include <QApplication>
+#include <QFrame>
 #include <QIcon>
+#include <QMessageBox>
 #include <QObject>
 #include <QWidget>
-#include <QFrame>
 
 #include <ros/console.h>
+#include <rviz/geometry.h>
 #include <rviz/viewport_mouse_event.h>
 #include <rviz/visualization_manager.h>
-#include <rviz/geometry.h>
 
+#include <rviz/display.h>
 #include <rviz/display_context.h>
 #include <rviz/frame_manager.h>
-#include <rviz/display.h>
 
+#include <rviz/display_group.h>
 #include <rviz/tool.h>
 #include <rviz/tool_manager.h>
-#include <rviz/display_group.h>
 
 #include <mesh_msgs/MeshFaceClusterStamped.h>
 
 #ifndef Q_MOC_RUN
 #include <rviz/mesh_loader.h>
 
-#include <OGRE/OgreManualObject.h>
-#include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreSceneManager.h>
+#include <OGRE/Ogre.h>
 #include <OGRE/OgreEntity.h>
-#include <OGRE/OgreStringConverter.h>
+#include <OGRE/OgreManualObject.h>
 #include <OGRE/OgreMaterialManager.h>
 #include <OGRE/OgreRay.h>
+#include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneQuery.h>
-#include <OGRE/Ogre.h>
+#include <OGRE/OgreStringConverter.h>
 
 #endif
 
-namespace rviz
-{
+namespace rviz {
 class RosTopicProperty;
 class ColorProperty;
-}  // namespace rviz
+} // namespace rviz
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 // Forward declarations
 class ClusterLabelDisplay;
 class ClusterLabelVisual;
@@ -116,8 +114,7 @@ class ClusterLabelVisual;
  * @class ClusterLabelTool
  * @brief Tool for selecting faces
  */
-class ClusterLabelTool : public rviz::Tool
-{
+class ClusterLabelTool : public rviz::Tool {
   Q_OBJECT
 public:
   /**
@@ -150,13 +147,13 @@ public:
    * @param event The mouse event
    * @return Exit code
    */
-  virtual int processMouseEvent(rviz::ViewportMouseEvent& event);
+  virtual int processMouseEvent(rviz::ViewportMouseEvent &event);
 
   /**
    * @brief Connects this tool with a given display
    * @param display The display that creates this tool
    */
-  void setDisplay(ClusterLabelDisplay* display);
+  void setDisplay(ClusterLabelDisplay *display);
 
   /**
    * @brief Connects this tool with a given visual
@@ -198,15 +195,15 @@ private:
   std::vector<uint32_t> m_selectedFaces;
   std::vector<bool> m_faceSelectedArray;
   bool m_displayInitialized;
-  ClusterLabelDisplay* m_display;
+  ClusterLabelDisplay *m_display;
   std::shared_ptr<ClusterLabelVisual> m_visual;
   std::shared_ptr<Geometry> m_meshGeometry;
   float m_sphereSize = 1.0f;
 
   // Selection Box
-  rviz::DisplayContext* m_displayContext;
-  Ogre::SceneNode* m_sceneNode;
-  Ogre::ManualObject* m_selectionBox;
+  rviz::DisplayContext *m_displayContext;
+  Ogre::SceneNode *m_sceneNode;
+  Ogre::ManualObject *m_selectionBox;
   Ogre::MaterialPtr m_selectionBoxMaterial;
   Ogre::Vector2 m_selectionStart;
   Ogre::Vector2 m_selectionStop;
@@ -217,15 +214,17 @@ private:
   std::vector<Ogre::Vector3> m_vertexPositions;
 
   void updateSelectionBox();
-  void selectionBoxStart(rviz::ViewportMouseEvent& event);
-  void selectionBoxMove(rviz::ViewportMouseEvent& event);
-  void selectMultipleFaces(rviz::ViewportMouseEvent& event, bool selectMode);
-  void selectFacesInBoxParallel(Ogre::PlaneBoundedVolume& volume, bool selectMode);
-  void selectSingleFace(rviz::ViewportMouseEvent& event, bool selectMode);
-  void selectSingleFaceParallel(Ogre::Ray& ray, bool selectMode);
-  void selectSphereFaces(rviz::ViewportMouseEvent& event, bool selectMode);
-  void selectSphereFacesParallel(Ogre::Ray& ray, bool selectMode);
-  boost::optional<std::pair<uint32_t, float>> getClosestIntersectedFaceParallel(Ogre::Ray& ray);
+  void selectionBoxStart(rviz::ViewportMouseEvent &event);
+  void selectionBoxMove(rviz::ViewportMouseEvent &event);
+  void selectMultipleFaces(rviz::ViewportMouseEvent &event, bool selectMode);
+  void selectFacesInBoxParallel(Ogre::PlaneBoundedVolume &volume,
+                                bool selectMode);
+  void selectSingleFace(rviz::ViewportMouseEvent &event, bool selectMode);
+  void selectSingleFaceParallel(Ogre::Ray &ray, bool selectMode);
+  void selectSphereFaces(rviz::ViewportMouseEvent &event, bool selectMode);
+  void selectSphereFacesParallel(Ogre::Ray &ray, bool selectMode);
+  boost::optional<std::pair<uint32_t, float>>
+  getClosestIntersectedFaceParallel(Ogre::Ray &ray);
 
   ros::Publisher m_labelPublisher;
 
@@ -253,6 +252,6 @@ private:
   cl::Kernel m_clKernelBox;
   cl::Kernel m_clKernelDirAndDist;
 };
-}  // end namespace rviz_map_plugin
+} // end namespace rviz_map_plugin
 
 #endif

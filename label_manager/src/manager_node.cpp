@@ -3,16 +3,15 @@
  *
  */
 
-#include <ros/ros.h>
 #include "label_manager/manager.h"
+#include <ros/ros.h>
 
-int main(int argc, char **argv)
-{
-    ros::init(argc, argv, "label_manager");
-    ros::NodeHandle nodeHandle("~");
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "label_manager");
+  ros::NodeHandle nodeHandle("~");
 
-    label_manager::LabelManager lm(nodeHandle);
+  label_manager::LabelManager lm(nodeHandle);
 
-    ros::spin();
-    return 0;
+  ros::spin();
+  return 0;
 }

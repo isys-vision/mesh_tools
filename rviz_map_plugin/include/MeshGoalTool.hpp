@@ -47,22 +47,20 @@
 
 #include "MeshPoseTool.hpp"
 #include <geometry_msgs/PoseStamped.h>
+#include <rviz/display_context.h>
 #include <rviz/properties/bool_property.h>
 #include <rviz/properties/string_property.h>
-#include <rviz/display_context.h>
 
 #ifndef Q_MOC_RUN
 #include <QObject>
 #endif
 
-namespace rviz_map_plugin
-{
+namespace rviz_map_plugin {
 /**
  * @class MeshGoalTool
  * @brief Tool for publishing a goal within a mesh
  */
-class MeshGoalTool : public MeshPoseTool
-{
+class MeshGoalTool : public MeshPoseTool {
   Q_OBJECT
 public:
   /**
@@ -88,12 +86,13 @@ protected:
    * @param position Position
    * @param orientation Orientation
    */
-  virtual void onPoseSet(const Ogre::Vector3& position, const Ogre::Quaternion& orientation);
+  virtual void onPoseSet(const Ogre::Vector3 &position,
+                         const Ogre::Quaternion &orientation);
 
   /// Property for the topic
-  rviz::StringProperty* topic_property_;
+  rviz::StringProperty *topic_property_;
   /// Switch bottom / top for selection
-  rviz::BoolProperty* switch_bottom_top_;
+  rviz::BoolProperty *switch_bottom_top_;
   /// Publisher
   ros::Publisher pose_pub_;
   /// Node handle
