@@ -45,17 +45,16 @@
  *
  */
 
-#include <CLUtil.hpp>
 #include <ClusterLabelDisplay.hpp>
 #include <ClusterLabelTool.hpp>
 #include <ClusterLabelVisual.hpp>
 
+#include <CLUtil.hpp>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <sstream>
-
-#include <chrono>
 
 #include <rviz/properties/color_property.h>
 
