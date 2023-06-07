@@ -42,39 +42,37 @@
  *  author: Sebastian Pütz <spuetz@uni-osnabrueck.de>
  */
 
-
 #include "MeshGoalTool.hpp"
 
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS( rviz_map_plugin::MeshGoalTool, rviz::Tool )
+PLUGINLIB_EXPORT_CLASS(rviz_map_plugin::MeshGoalTool, rviz::Tool)
 
-namespace rviz_map_plugin{
-MeshGoalTool::MeshGoalTool()
-{
+namespace rviz_map_plugin {
+MeshGoalTool::MeshGoalTool() {
   shortcut_key_ = 'm';
-  topic_property_ = new rviz::StringProperty( "Topic", "goal",
-                                              "The topic on which to publish the mesh navigation goals.",
-                                              getPropertyContainer(), SLOT(updateTopic()), this);
+  topic_property_ = new rviz::StringProperty(
+      "Topic", "goal",
+      "The topic on which to publish the mesh navigation goals.",
+      getPropertyContainer(), SLOT(updateTopic()), this);
 
-  switch_bottom_top_ = new rviz::BoolProperty("Switch Bottom/Top",
-      false, "Enable to stwich the bottom and top.",
+  switch_bottom_top_ = new rviz::BoolProperty(
+      "Switch Bottom/Top", false, "Enable to stwich the bottom and top.",
       getPropertyContainer());
-
 }
 
- void MeshGoalTool::onInitialize()
- {
-   MeshPoseTool::onInitialize();
-   setName( "Mesh Goal" );
-   updateTopic();
- }
+void MeshGoalTool::onInitialize() {
+  MeshPoseTool::onInitialize();
+  setName("Mesh Goal");
+  updateTopic();
+}
 
- void MeshGoalTool::updateTopic()
- {
-   pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>( topic_property_->getStdString(), 1 );
- }
+void MeshGoalTool::updateTopic() {
+  pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(
+      topic_property_->getStdString(), 1);
+}
 
- void MeshGoalTool::onPoseSet( const Ogre::Vector3& position, const Ogre::Quaternion& orientation ){
+void MeshGoalTool::onPoseSet(const Ogre::Vector3 &position,
+                             const Ogre::Quaternion &orientation) {
   geometry_msgs::PoseStamped msg;
   msg.pose.position.x = position.x;
   msg.pose.position.y = position.y;
@@ -84,21 +82,12 @@ MeshGoalTool::MeshGoalTool()
 
   Ogre::Quaternion ros_orientation;
 
-  if(switch_bottom_top_->getBool())
-  {
-    ros_orientation.FromAxes(
-        -orientation.zAxis(),
-        orientation.xAxis(),
-        -orientation.yAxis()
-    );
-  }
-  else
-  {
-    ros_orientation.FromAxes(
-        -orientation.zAxis(),
-        -orientation.xAxis(),
-        orientation.yAxis()
-    );
+  if (switch_bottom_top_->getBool()) {
+    ros_orientation.FromAxes(-orientation.zAxis(), orientation.xAxis(),
+                             -orientation.yAxis());
+  } else {
+    ros_orientation.FromAxes(-orientation.zAxis(), -orientation.xAxis(),
+                             orientation.yAxis());
   }
 
   msg.pose.orientation.x = ros_orientation.x;
@@ -109,6 +98,6 @@ MeshGoalTool::MeshGoalTool()
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = context_->getFixedFrame().toStdString();
   pose_pub_.publish(msg);
- }
-
 }
+
+} // namespace rviz_map_plugin
