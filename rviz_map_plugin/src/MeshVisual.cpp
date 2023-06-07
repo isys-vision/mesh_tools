@@ -211,12 +211,18 @@ void MeshVisual::reset() {
 
   std::stringstream sstm;
 
-  sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random
-       << "GeneralMaterial_";
-  Ogre::MaterialManager::getSingleton().unload(sstm.str());
-  Ogre::MaterialManager::getSingleton().remove(sstm.str());
-  sstm.str("");
-  sstm.clear();
+  ROS_ERROR_STREAM("We have the next material " << sstm.str());
+  ROS_ERROR_STREAM("m_meshGeneralMaterial " << m_meshGeneralMaterial);
+  ROS_ERROR_STREAM("normal material " << m_normalMaterial);
+
+  if (!m_meshGeneralMaterial.isNull()) {
+    sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random
+         << "GeneralMaterial_";
+    Ogre::MaterialManager::getSingleton().unload(sstm.str());
+    Ogre::MaterialManager::getSingleton().remove(sstm.str());
+    sstm.str("");
+    sstm.clear();
+  }
 
   if (m_vertex_colors_enabled) {
     sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random
@@ -227,12 +233,14 @@ void MeshVisual::reset() {
     sstm.clear();
   }
 
-  sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random
-       << "NormalMaterial";
-  Ogre::MaterialManager::getSingleton().unload(sstm.str());
-  Ogre::MaterialManager::getSingleton().remove(sstm.str());
-  sstm.str("");
-  sstm.clear();
+  if (!m_normalMaterial.isNull()) {
+    sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random
+         << "NormalMaterial";
+    Ogre::MaterialManager::getSingleton().unload(sstm.str());
+    Ogre::MaterialManager::getSingleton().remove(sstm.str());
+    sstm.str("");
+    sstm.clear();
+  }
 
   for (Ogre::MaterialPtr textureMaterial : m_textureMaterials) {
     Ogre::MaterialManager::getSingleton().unload(textureMaterial->getName());
@@ -766,7 +774,7 @@ void MeshVisual::enteringNormals(const Geometry &mesh,
 
 bool MeshVisual::setGeometry(const Geometry &mesh) {
   ROS_ERROR("200");
-  // reset();
+  reset();
   ROS_ERROR("201");
   m_geometry = mesh;
   ROS_ERROR("202");
