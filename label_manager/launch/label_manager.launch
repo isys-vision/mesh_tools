@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="label_manager" type="label_manager" name="label_manager" output="screen">
-        <param name="folder_path" value="/tmp/label_manager/"/>
+        <param name="folder_path" value="/home/igor/open3d_data/pluto_navigation/maps/botanical_garden_osnabrueck/"/>
     </node>
 
 </launch>

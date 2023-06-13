@@ -865,6 +865,7 @@ void MeshDisplay::requestMaterials(std::string uuid) {
       const mesh_msgs::MeshMaterial &mat =
           meshMaterialsStamped->mesh_materials.materials[i];
       materials[i].textureIndex = mat.texture_index;
+      // if (mat.has_texture) materials[i].textureIndex = mat.texture_index;
       materials[i].color =
           Color(mat.color.r, mat.color.g, mat.color.b, mat.color.a);
     }

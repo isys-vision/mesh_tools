@@ -70,7 +70,8 @@ QWidget *FileProperty::createEditor(QWidget *parent,
   if (editor->exec()) {
     QStringList fileNames = editor->selectedFiles();
     if (fileNames.size() == 0) {
-      setStdFilename("");
+      setStdFilename("/home/igor/open3d_data/pluto_navigation/maps/"
+                     "botanical_garden_osnabrueck/");
     } else {
       setFilename(fileNames.at(0));
     }

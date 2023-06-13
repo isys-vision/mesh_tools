@@ -34,6 +34,7 @@
       Displays a mesh.
     </description>
   </class>
+  <!--
   <class name="rviz_map_plugin/MeshGoal"
          type="rviz_map_plugin::MeshGoalTool"
          base_class_type="rviz::Tool">
@@ -41,4 +42,5 @@
       Select a goal on a mesh.
     </description>
   </class>
+  -->
 </library>

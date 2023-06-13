@@ -158,7 +158,7 @@ MeshVisual::MeshVisual(rviz::DisplayContext *context, size_t displayID,
 }
 
 MeshVisual::~MeshVisual() {
-  ROS_INFO("Destroying MeshVisual %lu_TexturedMesh_%lu_%lu", m_prefix,
+  ROS_WARN("Destroying MeshVisual %lu_TexturedMesh_%lu_%lu", m_prefix,
            m_postfix, m_random);
 
   ROS_ERROR("151");
@@ -211,9 +211,9 @@ void MeshVisual::reset() {
 
   std::stringstream sstm;
 
-  ROS_ERROR_STREAM("We have the next material " << sstm.str());
-  ROS_ERROR_STREAM("m_meshGeneralMaterial " << m_meshGeneralMaterial);
-  ROS_ERROR_STREAM("normal material " << m_normalMaterial);
+  ROS_WARN_STREAM("We have the next material " << sstm.str());
+  ROS_WARN_STREAM("m_meshGeneralMaterial " << m_meshGeneralMaterial);
+  ROS_WARN_STREAM("normal material " << m_normalMaterial);
 
   if (!m_meshGeneralMaterial.isNull()) {
     sstm << m_prefix << "_TexturedMesh_" << m_postfix << "_" << m_random

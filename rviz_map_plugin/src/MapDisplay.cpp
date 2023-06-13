@@ -62,9 +62,11 @@
 
 namespace rviz_map_plugin {
 MapDisplay::MapDisplay() {
-  m_mapFilePath = new rviz::FileProperty("Map file path", "/path/to/map.h5",
-                                         "Absolute path of the map file", this,
-                                         SLOT(updateMap()));
+  m_mapFilePath = new rviz::FileProperty(
+      "Map file path",
+      "/home/igor/open3d_data/pluto_navigation/maps/"
+      "botanical_garden_osnabrueck/market_garden_ibbenbueren_inner.h5",
+      "Absolute path of the map file", this, SLOT(updateMap()));
 }
 
 MapDisplay::~MapDisplay() {}
@@ -93,6 +95,7 @@ rviz::Display *MapDisplay::createDisplay(const QString &class_id) {
 }
 
 void MapDisplay::onInitialize() {
+
   Display *display = createDisplay("rviz_map_plugin/ClusterLabel");
 
   m_clusterLabelDisplay = static_cast<ClusterLabelDisplay *>(display);

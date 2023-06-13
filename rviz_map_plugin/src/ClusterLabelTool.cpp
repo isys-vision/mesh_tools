@@ -89,9 +89,9 @@ ClusterLabelTool::~ClusterLabelTool() {
 // context_ are set.  It should be called only once per instantiation.
 void ClusterLabelTool::onInitialize() {
   ROS_DEBUG("ClusterLabelTool: Call Init");
+  ROS_WARN_STREAM("ClusterLabelTool::onInitialize");
   m_sceneNode =
       context_->getSceneManager()->getRootSceneNode()->createChildSceneNode();
-
   m_selectionBox = context_->getSceneManager()->createManualObject(
       "ClusterLabelTool_SelectionBox");
   m_selectionBox->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
@@ -99,11 +99,9 @@ void ClusterLabelTool::onInitialize() {
   m_selectionBox->setUseIdentityView(true);
   m_selectionBox->setQueryFlags(0);
   m_sceneNode->attachObject(m_selectionBox);
-
   m_selectionBoxMaterial = Ogre::MaterialManager::getSingleton().create(
       "ClusterLabelTool_SelectionBoxMaterial",
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-
   m_selectionBoxMaterial->setAmbient(Ogre::ColourValue(0, 0, 255, 0.5));
   m_selectionBoxMaterial->setDiffuse(0, 0, 0, 0.5);
   m_selectionBoxMaterial->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
@@ -111,9 +109,9 @@ void ClusterLabelTool::onInitialize() {
   m_selectionBoxMaterial->getTechnique(0)->getPass(0)->setPolygonMode(
       Ogre::PM_SOLID);
   m_selectionBoxMaterial->setCullingMode(Ogre::CULL_NONE);
-
-  // try-catch block to check for OpenCL errors
-  try {
+  ROS_WARN_STREAM("We initialized Selection Box Materials");
+  ROS_WARN_STREAM("try-catch block to check for OpenCL errors");
+  /*try {
     // Initialize OpenCL
     ROS_DEBUG("Get platforms");
     vector<cl::Platform> platforms;
@@ -121,11 +119,14 @@ void ClusterLabelTool::onInitialize() {
     for (auto const &platform : platforms) {
       ROS_DEBUG("Found platform: %s",
                 platform.getInfo<CL_PLATFORM_NAME>().c_str());
+      ROS_ERROR_STREAM(
+          "Found platform: " << platform.getInfo<CL_PLATFORM_NAME>().c_str());
       ROS_DEBUG("platform version: %s",
                 platform.getInfo<CL_PLATFORM_VERSION>().c_str());
+      ROS_ERROR_STREAM("platform version: %s"
+                       << platform.getInfo<CL_PLATFORM_VERSION>().c_str());
     }
     ROS_DEBUG(" ");
-
     vector<cl::Device> consideredDevices;
     for (auto const &platform : platforms) {
       ROS_DEBUG("Get devices of %s: ",
@@ -229,7 +230,7 @@ void ClusterLabelTool::onInitialize() {
     ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
     ros::requestShutdown();
     exit(1);
-  }
+  }*/
 }
 
 void ClusterLabelTool::setVisual(std::shared_ptr<ClusterLabelVisual> visual) {
@@ -276,8 +277,8 @@ void ClusterLabelTool::setDisplay(ClusterLabelDisplay *display) {
     }
   }
 
-  // try-catch block to check for OpenCL errors
-  try {
+  ROS_WARN_STREAM("setDisplay : try-catch block to check for OpenCL errors");
+  /*try {
     m_clVertexBuffer = cl::Buffer(
         m_clContext,
         CL_MEM_READ_ONLY | CL_MEM_HOST_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
@@ -324,7 +325,7 @@ void ClusterLabelTool::setDisplay(ClusterLabelDisplay *display) {
     ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
     ros::shutdown();
     exit(1);
-  }
+  }*/
 }
 
 void ClusterLabelTool::updateSelectionBox() {
@@ -403,24 +404,25 @@ void ClusterLabelTool::selectFacesInBoxParallel(
     m_boxData.push_back(plane.normal.z);
     m_boxData.push_back(plane.d);
   }
+  ROS_WARN_STREAM("selectFacesInBoxParallel 1");
+  /*
+    try {
+      m_clQueue.enqueueWriteBuffer(m_clBoxBuffer, CL_TRUE, 0,
+                                   sizeof(float) * 4 * 6, m_boxData.data());
 
-  try {
-    m_clQueue.enqueueWriteBuffer(m_clBoxBuffer, CL_TRUE, 0,
-                                 sizeof(float) * 4 * 6, m_boxData.data());
+      m_clQueue.enqueueNDRangeKernel(m_clKernelBox, cl::NullRange,
+                                     cl::NDRange(m_meshGeometry->faces.size()),
+                                     cl::NullRange, nullptr);
+      m_clQueue.finish();
 
-    m_clQueue.enqueueNDRangeKernel(m_clKernelBox, cl::NullRange,
-                                   cl::NDRange(m_meshGeometry->faces.size()),
-                                   cl::NullRange, nullptr);
-    m_clQueue.finish();
-
-    m_resultDistances.resize(m_meshGeometry->faces.size());
-    m_clQueue.enqueueReadBuffer(m_clResultBuffer, CL_TRUE, 0,
-                                sizeof(float) * m_meshGeometry->faces.size(),
-                                m_resultDistances.data());
-  } catch (cl::Error err) {
-    ROS_ERROR_STREAM(err.what() << ": " << CLUtil::getErrorString(err.err()));
-    ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
-  }
+      m_resultDistances.resize(m_meshGeometry->faces.size());
+      m_clQueue.enqueueReadBuffer(m_clResultBuffer, CL_TRUE, 0,
+                                  sizeof(float) * m_meshGeometry->faces.size(),
+                                  m_resultDistances.data());
+    } catch (cl::Error err) {
+      ROS_ERROR_STREAM(err.what() << ": " << CLUtil::getErrorString(err.err()));
+      ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
+    }*/
 
   for (int faceId = 0; faceId < m_meshGeometry->faces.size(); faceId++) {
     if (m_resultDistances[faceId] > 0) {
@@ -430,6 +432,7 @@ void ClusterLabelTool::selectFacesInBoxParallel(
       m_faceSelectedArray[faceId] = selectMode;
     }
   }
+  ROS_WARN_STREAM("selectFacesInBoxParallel 2");
 
   std::vector<uint32_t> tmpFaceList;
 
@@ -438,6 +441,7 @@ void ClusterLabelTool::selectFacesInBoxParallel(
       tmpFaceList.push_back(faceId);
     }
   }
+  ROS_WARN_STREAM("selectFacesInBoxParallel 3");
 
   if (m_displayInitialized && m_visual) {
     m_visual->setFacesInCluster(tmpFaceList);
@@ -460,7 +464,8 @@ void ClusterLabelTool::selectSingleFaceParallel(Ogre::Ray &ray,
                ray.getDirection().y, ray.getDirection().z};
 
   std::vector<std::pair<uint32_t, float>> intersectedFaceList;
-
+  ROS_WARN_STREAM("selectSingleFaceParallel");
+  /*
   try {
     m_clQueue.enqueueWriteBuffer(m_clRayBuffer, CL_TRUE, 0, sizeof(float) * 6,
                                  m_rayData.data());
@@ -477,7 +482,7 @@ void ClusterLabelTool::selectSingleFaceParallel(Ogre::Ray &ray,
   } catch (cl::Error err) {
     ROS_ERROR_STREAM(err.what() << ": " << CLUtil::getErrorString(err.err()));
     ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
-  }
+  }*/
 
   int closestFaceId = -1;
   float minDist = std::numeric_limits<float>::max();
@@ -528,6 +533,8 @@ void ClusterLabelTool::selectSphereFacesParallel(Ogre::Ray &ray,
     m_sphereData = {sphereCenter.x, sphereCenter.y, sphereCenter.z,
                     raycastResult->second};
 
+    ROS_WARN_STREAM("selectSphereFacesParallel");
+    /*
     try {
       m_clQueue.enqueueWriteBuffer(m_clSphereBuffer, CL_TRUE, 0,
                                    sizeof(float) * 4, m_sphereData.data());
@@ -544,7 +551,7 @@ void ClusterLabelTool::selectSphereFacesParallel(Ogre::Ray &ray,
     } catch (cl::Error err) {
       ROS_ERROR_STREAM(err.what() << ": " << CLUtil::getErrorString(err.err()));
       ROS_WARN_STREAM("(" << CLUtil::getErrorDescription(err.err()) << ")");
-    }
+    }*/
 
     for (int faceId = 0; faceId < m_meshGeometry->faces.size(); faceId++) {
       // if face is inside sphere, select it
